@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: AWS Native Chef Stack for Marketplace v5.1.1
+Description: AWS Native Chef Stack for Marketplace v5.2.0
 
 Parameters:
   # Required Parameters
@@ -145,11 +145,12 @@ Parameters:
       'm3.medium.elasticsearch', 'm3.large.elasticsearch', 'm3.xlarge.elasticsearch', 'm3.medium.elasticsearch',
       'r3.large.elasticsearch', 'r3.xlarge.elasticsearch', 'r3.2xlarge.elasticsearch', 'r3.4xlarge.elasticsearch', 'r3.8xlarge.elasticsearch' ]
   ChefElasticSearchVersion:
-    Description: Version of ElasticSearch to use. (5.6 recommended for new installs)
+    Description: Version of ElasticSearch to use. (6.8 recommended for new installs)
     Type: String
     Default: '5.6'
     AllowedValues:
     - '5.6'
+    - '6.8'
   ChefElasticSearchShardCount:
     Description: Number of ElasticSearch hosts to provision at launch (3 recommended, 2 provides HA)
     Default: 2
@@ -198,7 +199,7 @@ Parameters:
   TemplateVersion:
     Description: The version of this template to use (do not change this unless directed by support)
     Type: String
-    Default: "5.1.1"
+    Default: "5.2.0"
   LogsRetentionInDays:
     Description: Specifies the number of days you want to retain cloudwatch log events.
     Type: Number
@@ -279,37 +280,37 @@ Metadata:
 Mappings:
   AMI:
     eu-north-1:
-      centos: ami-0b9af355d644500ce
+      centos: ami-0f35acb0146ca6f78
     ap-south-1:
-      centos: ami-0d55d5856a64a8918
+      centos: ami-0cda6bedbb52c34b4
     eu-west-3:
-      centos: ami-0dedf3f53f2557591
+      centos: ami-0877a081573423d44
     eu-west-2:
-      centos: ami-04c86e4a44288c442
+      centos: ami-0f0de2763dfd55e97
     eu-west-1:
-      centos: ami-0b34ea9402583cc17
+      centos: ami-0b95d5a8c9438a534
     ap-northeast-2:
-      centos: ami-021ab66ea3552f872
+      centos: ami-0be5ab6a008fccd60
     ap-northeast-1:
-      centos: ami-083a80ec77b6c48f5
+      centos: ami-0f09cfeeb1b63f613
     sa-east-1:
-      centos: ami-034441c2a437922b1
+      centos: ami-0f6135f44f2abfd7c
     ca-central-1:
-      centos: ami-0fae7558a8c3d4683
+      centos: ami-0bf1cb90ad35e16d0
     ap-southeast-1:
-      centos: ami-073d575257d1d42ea
+      centos: ami-09d1d2cf1e57e267e
     ap-southeast-2:
-      centos: ami-0595dd171f0627906
+      centos: ami-09e21da53848db264
     eu-central-1:
-      centos: ami-0ad4e9dfe9704c7a5
+      centos: ami-0710d5c1b90df9df9
     us-east-1:
-      centos: ami-093b02d3970c7616d
+      centos: ami-0fdef64afaadabde5
     us-east-2:
-      centos: ami-0aa5e3a0d1fda1498
+      centos: ami-010b15bc3f5317ce1
     us-west-1:
-      centos: ami-08e6c19ae4c1a2267
+      centos: ami-0ad28bb7307255f0d
     us-west-2:
-      centos: ami-01ddf45199de44e71
+      centos: ami-0193af60bbabed8ef
 
 Resources:
   ChefRole:

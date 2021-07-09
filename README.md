@@ -40,8 +40,8 @@ You can launch this stack with the push of a button:
 
 | Edition | Version | Est Monthly cost | Launch button |
 | ------- | ------- | ---------------- | ------------- |
-| High Performance | 5.1.1 | [$1500*](https://calculator.s3.amazonaws.com/index.html#r=IAD&s=EC2&key=calc-E9251374-D80C-45B7-BED7-C9C9778B1D6C) | <p><a href="https://console.aws.amazon.com/cloudformation/home#/stacks/new?templateURL=https:%2F%2Fs3.amazonaws.com%2Faws-native-chef-server%2F5.1.1%2Fmain.yaml&amp;stackName=my-chef-stack" target="_blank"><img src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png" alt="Launch Stack" /></a></p> |
-| Lowest Cost | 5.1.1 | [$320*](https://calculator.s3.amazonaws.com/index.html#r=IAD&s=EC2&key=files/calc-165638db8e331664846c0d6654d743377bd3eac6&v=ver20190604sQ) | <p><a href="https://console.aws.amazon.com/cloudformation/home#/stacks/new?templateURL=https:%2F%2Fs3.amazonaws.com%2Faws-native-chef-server%2F5.1.1%2Fmarketplace.yaml&amp;stackName=my-chef-stack" target="_blank"><img src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png" alt="Launch Stack" /></a></p> |
+| High Performance | 5.2.0 | [$1500*](https://calculator.s3.amazonaws.com/index.html#r=IAD&s=EC2&key=calc-E9251374-D80C-45B7-BED7-C9C9778B1D6C) | <p><a href="https://console.aws.amazon.com/cloudformation/home#/stacks/new?templateURL=https:%2F%2Fs3.amazonaws.com%2Faws-native-chef-server%2F5.2.0%2Fmain.yaml&amp;stackName=my-chef-stack" target="_blank"><img src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png" alt="Launch Stack" /></a></p> |
+| Lowest Cost | 5.2.0 | [$320*](https://calculator.s3.amazonaws.com/index.html#r=IAD&s=EC2&key=files/calc-165638db8e331664846c0d6654d743377bd3eac6&v=ver20190604sQ) | <p><a href="https://console.aws.amazon.com/cloudformation/home#/stacks/new?templateURL=https:%2F%2Fs3.amazonaws.com%2Faws-native-chef-server%2F5.2.0%2Fmarketplace.yaml&amp;stackName=my-chef-stack" target="_blank"><img src="https://s3.amazonaws.com/cloudformation-examples/cloudformation-launch-stack.png" alt="Launch Stack" /></a></p> |
 
 _*NOTE: Estimated costs are just that, your mileage will vary. Use reserved instances to greatly reduce costs for long-running clusters._
 
@@ -51,7 +51,7 @@ However, the most repeatable and least error-prone way to launch this stack is t
 ```bash
 MYBUCKET=aws-native-chef-server
 MYID=mycompany
-VERSION=5.1.1
+VERSION=5.2.0
 EDITION=main  # main or marketplace
 # Configure the automate_stack_parameters.json and then launch the cloudformation stack:
 # If you're using your own bucket, uncomment the next line:
@@ -72,7 +72,7 @@ If you've made changes to the template content or parameters and you wish to upd
 ```bash
 MYBUCKET=aws-native-chef-server
 MYID=mycompany
-VERSION=5.1.1
+VERSION=5.2.0
 EDITION=main  # main or marketplace
 # If you're using your own bucket, uncomment the next line:
 # aws s3 sync . s3://$MYBUCKET/$VERSION/ --exclude "*" --include "*.yaml" --include "files/*" && \
@@ -97,9 +97,9 @@ otherwise just SSH directly to the public IPs of the chef servers
 
 ## Upgrading the Chef Server
 
-If a new Chef Server or Manage package comes out, the process for upgrading is simple and requires no downtime:
+If a new version of the template and associated AMIs comes out, the process for upgrading is simple and requires no downtime:
 
-1. Using Cloudformation's `update-stack` functionality, update the `ChefServerPackage` and `ChefManagePackage` parameters to the new URLs.
+1. Using Cloudformation's `update-stack` functionality, update to a new version of the template.
   - Confirm in the ChangeSet that this will only `ServerLaunchConfig` resource and no others!
 2. Wait for the update-stack to run, it may take a few minutes for the new metadata to be available
 3. Terminate the bootstrap frontend instance (aka `mystack-chef-bootstrap-frontend`). AutoScale will launch a new one within a few seconds that will pick up the new package versions and upgrade.
@@ -108,6 +108,19 @@ If a new Chef Server or Manage package comes out, the process for upgrading is s
 5. Terminate all of the non-bootstrap frontend instances.  the same process will happen.
   - alternatively, temporarily increase the desired capacity to launch new instances and then decrease it back to the original level to terminate the old instances
 6. You're up to date!
+
+## Upgrading ElasticSearch
+
+As of template version 5.2.0 the included version of Chef Server is at least 13.2.0, which includes support for ElasticSearch 6. The allowed versions of ElasticSearch are now 2, 5 and 6.
+
+Also as of template version 5.2.0, in-place upgrade of ElasticSearch versions is enabled. Please refer to the AWS documentation for more information:
+
+- https://docs.aws.amazon.com/elasticsearch-service/latest/developerguide/es-version-migration.html
+- https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-updatepolicy.html#cfn-attributes-updatepolicy-upgradeelasticsearchdomain 
+
+The process for upgrading is simple but requires some downtime for AWS to process the ElasticSearch domain upgrade. However, if you wish to upgrade to ElasticSearch 6, you *must* first upgrade Chef Server to 13.2.0. Update to template versions 5.2.0 or later, and follow the process above for updating the stack and upgrading Chef Server ensuring that the `ChefElasticSearchVersion` parameter is the same version as currently deployed.
+
+Once the stack update is complete, create a new change set with the same template and configure the `ChefElasticSearchVersion` parameter to the required version. Confirm in the ChangeSet that this will only `ElasticSearchDomain` resource and no others!
 
 # FAQ
 
